@@ -10,16 +10,10 @@ global expandedNodes
 expandedNodes = set()
 global emptyNum
 emptyNum = 9
-global timeCount
-timeCount = 0
-global timeExpand
-timeExpand = 0
-global timeSetAdd
-timeSetAdd = 0
-
 global tree
 tree=TreeCreator()
-
+global goal
+goal = [i for i in range(1, 10)]
 class Node:
 
     def __init__(self, status:list, cost:float) -> None:
@@ -132,7 +126,7 @@ def heuristic(status, function):
     return function(status)
 
 
-def evaluateNode(node):
+def evaluateNode(node,function):
     # add current cost and heuristic cost
     return node.cost+heuristic(node.status, function)
 
@@ -187,12 +181,10 @@ def expandNode(node):
         newNode.setParent(node)
         nodes.append(newNode)
 
-    global timeExpand
-    timeExpand += time()-start
     return nodes
 
 
-def search(list, function):
+def search(list, function, isTreeNeed):
     startList = Node(list, 0)
     generationCount = 0
     expandCount = 0
@@ -206,16 +198,13 @@ def search(list, function):
         node = pq.get()[1]
         generationCount += 1
 
-        start = time()
         expandedNodes.add(tuple(node.status))
-        global timeSetAdd
-        timeSetAdd += time()-start
         # print(node)
 
         if node.status == goal:
             print("Generated nodes:", generationCount)
             print("Expanded nodes:", expandCount)
-            return node
+            return generationCount, expandCount ,node
 
         for nextNode in expandNode(node):
             # if was expanded before, skip
@@ -223,19 +212,18 @@ def search(list, function):
             if tuple(nextNode.status) not in expandedNodes:
                 expandCount += 1
                 
-                # add the node to graph
-                tree.addNode(nextNode.status)
-                tree.setParent(nextNode.parent.status, nextNode.status)
+                if isTreeNeed:
+                    # add the node to graph
+                    tree.addNode(nextNode.status)
+                    tree.setParent(nextNode.parent.status, nextNode.status)
                 
-                pq.put((evaluateNode(nextNode), nextNode, function))
+                pq.put((evaluateNode(nextNode,function), nextNode))
 
-            global timeCount
-            timeCount += time()-start
 
     print("Generated nodes:", generationCount)
     print("Expanded nodes:", expandCount)
     print("There is no solution")
-
+    
 
 def judgeSolution(l):
     sum = 0
@@ -252,44 +240,65 @@ def judgeSolution(l):
         return False
 
 
-def printPath(node):
-    print("Path to goal:")
+def pathGetting(node):
+    path=[]
+    #print("Path to goal:")
     while node.parent != None:
-        print(node)
+        #print(node)
+        path.insert(0,node.status)
         node = node.parent
     print(node)
+    return path
 
+def clear():
+    for object in expandedNodes:
+        del object
+    expandedNodes.clear()
+    
+    
+    
+def solve(isTreeNeed,function):
+    clear()
+    timestart = time()
+    strFunctions=function.split()
+    #! use eval function to transform the string to function name
+    function=eval(strFunctions[0].lower()+strFunctions[1])
+    
+    randomList = goal.copy()
+    shuffle(randomList)                     # shuffle the list randomly
+    
+    #! expandedNodes.add(tuple(randomList)) can not add!
+    isSolvable=True
+    
+    if isTreeNeed:
+        randomList=[4,1,2,5,8,3,7,9,6]  # small tree
+        
+    #randomList = [5, 9, 4, 2, 7, 6, 1, 8, 3] # 5093
+    print("Start:", randomList)
+    if judgeSolution(randomList) != judgeSolution(goal):
+        print("The initial list is not solvable.")
+        isSolvable=False
+        path=[randomList]
+        #! worng!
+        #//path=randomList
+        generationCount=expandCount=timeTotal=None
 
-timestart = time()
-# create a list of numbers from 1 to 9 [1,2,3,4,5,6,7,8,9]
-goal = [i for i in range(1, 10)]
-randomList = goal.copy()
-shuffle(randomList)                     # shuffle the list randomly
-expandedNodes = set()
-# expandedNodes.add(tuple(randomList))
-randomList=[4,1,2,5,8,3,7,9,6]  # quick test
-# randomList = [5, 9, 4, 2, 7, 6, 1, 8, 3] # 5093
-print("Start:", randomList)
-if judgeSolution(randomList) != judgeSolution(goal):
-    print("The initial list is not solvable.")
-    exit()
+    if isSolvable:
+        #function = manhattanDistance  # heuristic function
 
+        print(function(randomList))
+        generationCount,expandCount,node = search(randomList, function,isTreeNeed)
 
-function = manhattanDistance  # heuristic function
+        path=pathGetting(node)
+        print(path)
+        #pathGetting(goal)
 
-print(function(randomList))
-node = search(randomList, function)
+        print(randomList, goal)
+        timeTotal = time()-timestart
+        print("total time used:", timeTotal)
 
-printPath(node)
-
-#printPath(goal)
-
-print(randomList, goal)
-timeTotal = time()-timestart
-print("timecount:", timeCount)
-print("timeexpand:", timeExpand)
-print("timesetadd:", timeSetAdd)
-print("total time used:", timeTotal)
-
-tree.highlightSolutionPath(node)
-tree.show()
+    if isTreeNeed:
+        tree.highlightSolutionPath(node)
+        tree.create()
+        
+    return {'path':path, 'time':timeTotal, 'isSolvable':isSolvable,'generationCount':generationCount, 'expandCount':expandCount,'time':timeTotal}

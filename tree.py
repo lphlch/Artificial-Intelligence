@@ -35,10 +35,10 @@ class TreeCreator:
         self.dot.edge(str(parent),str(child))
         
 
-    def show(self) -> None:
-        """show the graph
+    def create(self) -> None:
+        """create the graph
         """
-        self.dot.render('doctest-output/round-table.gv', view=True)
+        self.dot.render('img/tree',format="png", view=False)
 
     def highlightSolutionPath(self, goal) -> None:
         """highlight the solution path
