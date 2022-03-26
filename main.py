@@ -1,8 +1,8 @@
 from queue import PriorityQueue
-from random import shuffle
+
 from time import time
 from cmath import sqrt
-import numpy as np
+from numpy import dot,linalg
 
 from tree import TreeCreator
 
@@ -57,7 +57,6 @@ class Node:
         self.status[(i1-1)*3+j1-1], self.status[(i2-1)*3+j2 -
                                                 1] = self.status[(i2-1)*3+j2-1], self.status[(i1-1)*3+j1-1]
 
-
 def twoToOne(matrix:list)->list:
     """transform the two-dimensional list to one-dimensional list
 
@@ -75,7 +74,6 @@ def twoToOne(matrix:list)->list:
     oneDimensionalList = matrix[1][1:4]+matrix[2][1:4]+matrix[3][1:4]
 
     return oneDimensionalList
-
 
 def oneToTwo(list:list)->list:
     """transform the one-dimensional list to two-dimensional list
@@ -117,8 +115,8 @@ def euclideanDistance(status):
 
 
 def cosineDistance(status):
-    cos = np.dot(status, goal) / \
-        (np.linalg.norm(status)*(np.linalg.norm(goal)))
+    cos = dot(status, goal) / \
+        (linalg.norm(status)*(linalg.norm(goal)))
     return (1-cos)*50
 
 
@@ -193,12 +191,16 @@ def search(list, function, isTreeNeed):
     pq = PriorityQueue()
     # priority queue stores nodes as a list of [priority, node]
     pq.put((0, startList))
+    if isTreeNeed:
+        # add the node to graph
+        tree.addNode(startList.status)
 
     while not pq.empty():
         node = pq.get()[1]
         generationCount += 1
 
         expandedNodes.add(tuple(node.status))
+            
         # print(node)
 
         if node.status == goal:
@@ -257,15 +259,15 @@ def clear():
     
     
     
-def solve(isTreeNeed,function):
+def solve(isTreeNeed,function,randomList):
     clear()
     timestart = time()
     strFunctions=function.split()
     #! use eval function to transform the string to function name
     function=eval(strFunctions[0].lower()+strFunctions[1])
     
-    randomList = goal.copy()
-    shuffle(randomList)                     # shuffle the list randomly
+    # randomList = goal.copy()
+    # shuffle(randomList)                     # shuffle the list randomly
     
     #! expandedNodes.add(tuple(randomList)) can not add!
     isSolvable=True
@@ -293,7 +295,7 @@ def solve(isTreeNeed,function):
         print(path)
         #pathGetting(goal)
 
-        print(randomList, goal)
+        print("from",randomList, "to",goal)
         timeTotal = time()-timestart
         print("total time used:", timeTotal)
 
@@ -301,4 +303,4 @@ def solve(isTreeNeed,function):
         tree.highlightSolutionPath(node)
         tree.create()
         
-    return {'path':path, 'time':timeTotal, 'isSolvable':isSolvable,'generationCount':generationCount, 'expandCount':expandCount,'time':timeTotal}
+    return {'path':[randomList]+path, 'isSolvable':isSolvable,'generationCount':generationCount, 'expandCount':expandCount,'time':timeTotal}
