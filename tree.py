@@ -6,24 +6,15 @@ class TreeCreator:
     def __init__(self) -> None:
         self.dot = gv.Digraph(comment='Tree',strict=True)
 
-    def test(self):
-        self.dot.node('A', '1\n2\n')  # doctest: +NO_EXE
-        self.dot.node('B', 'b')
-        self.dot.node('L', 'l')
-        self.dot.node('E', 'e')
-
-        self.dot.edges(['AB', 'AL', 'BE'])
-        self.dot.edge('B', 'L', constraint='false')
-        self.dot.edges([])
-        self.dot.render('doctest-output/round-table.gv', view=True)
-
     def addNode(self, label: list) -> None:
         """add a node to the graph
 
         Args:
             label (list): show in graph
         """
-        self.dot.node(str(label),str(label[0:3])+'\n'+str(label[3:6])+'\n'+str(label[6:9]))
+        self.dot.node(str(label),
+                      (str(label[0:3])+'\n'+str(label[3:6])+'\n'+str(label[6:9]))
+                      .replace('9','  ').replace(',',' ').replace('[',' ').replace(']',' '),shape='box')
         
     def setParent(self, parent: str, child: str) -> None:
         """set the parent of the node

@@ -1,30 +1,52 @@
 from PySide2.QtWidgets import QApplication
 from PySide2.QtUiTools import QUiLoader
 from PySide2.QtCore import QTimer
+from PySide2.QtGui import QPixmap
 from PIL import Image
+from random import shuffle
 
 from main import solve
+from stats import stats
+
+
+def callEightDigitsStatsUI():
+    statsUi.ui.show()
+    statsUi.clickShow()
+
+
+class EightDigitsStatsUI:
+    def __init__(self):
+        self.ui = QUiLoader().load('ui/stats.ui')
+        self.ui.setStyleSheet(open('other/qss.css', 'r').read())
+
+    def clickShow(self):
+        self.ui.L_G.setPixmap(QPixmap('img/stats.png'))
 
 
 class EightDigitsUI:
 
     def __init__(self):
-
-        self.ui = QUiLoader().load('form.ui')
-        
+        # self.windowIcon = QIcon('img/icon.png')
+        self.ui = QUiLoader().load('ui/form.ui')
+        self.ui.setStyleSheet(open('other/qss.css', 'r').read())
 
         self.ui.Button_Show.clicked.connect(self.showImg)
         self.ui.Button_NextStep.clicked.connect(self.nextStep)
         self.ui.Button_PerviousStep.clicked.connect(self.perviousStep)
         self.ui.Button_Auto.clicked.connect(self.autoStartTimer)
-        self.ui.Button_Init.clicked.connect(self.initLCD)
+        self.ui.Button_Init.clicked.connect(self.random)
         self.ui.Check_GetTree.clicked.connect(self.clickCheckGetTree)
+        self.ui.Button_Reset.clicked.connect(self.reset)
+        self.ui.Combo_Function.currentIndexChanged.connect(self.changeFunction)
+        self.ui.Button_ShowStats.clicked.connect(self.showStats)
 
         self.LCDList = [self.ui.LCD_1, self.ui.LCD_2, self.ui.LCD_3,
                         self.ui.LCD_4, self.ui.LCD_5, self.ui.LCD_6, self.ui.LCD_7, self.ui.LCD_8, self.ui.LCD_9]
 
         self.currentStep = 0
         self.path = []
+        self.randomList = [i for i in range(1, 10)]
+        self.statsOfFunction = {}
 
         # set ui
         self.ui.Button_Show.setEnabled(False)
@@ -68,43 +90,73 @@ class EightDigitsUI:
             img = Image.open(filePath)
             img.show()
         except:
-            self.ui.Text_Information.setText("Error: Can't open image\nPlease check if you have begun to solve puzzle")
-            
-    def initLCD(self):
+            self.ui.Text_Information.setText(
+                "Error: Can't open image\nPlease check if you have begun to solve puzzle")
+
+    def showStats(self):
+        self.initLCD(isStats=True, function='Manhattan Distance')
+        self.initLCD(isStats=True,  function='Euclidean Distance')
+        self.initLCD(isStats=True, function='Cosine Distance')
+        s = stats()
+        s.draw(self.statsOfFunction)
+
+        # call stats ui
+        callEightDigitsStatsUI()
+
+    def initLCD(self, isRandom=False, function=None, isStats=False):
         solution = {}
+        isDraw = False
+
+        if function == None:
+            isDraw = False
 
         self.currentStep = 0
         self.ui.Progress_Steps.setValue(0)
-        
+
         # this is just for test if auto timer exist
         try:
             self.autoTimer.stop()
         except:
             pass
-        
-        function=self.ui.Combo_Function.currentText()
-        
+
+        if (not isDraw) and (not isStats):
+            function = self.ui.Combo_Function.currentText()
+
+        if isRandom:
+            # shuffle the list randomly
+            shuffle(self.randomList)
+
         # check if need to get tree view
         if self.ui.Check_GetTree.isChecked():
-            solution = solve(isTreeNeed=True,function=function)
+            solution = solve(isTreeNeed=True, function=function,
+                             randomList=self.randomList)
         else:
-            solution = solve(isTreeNeed=False,function=function)
+            solution = solve(isTreeNeed=False, function=function,
+                             randomList=self.randomList)
 
         self.path = solution['path']
         step = self.path[0]
-        self.updateLCD(step)
+
+        if not isDraw:
+            self.updateLCD(step)
 
         # check if is solvable
         if not solution['isSolvable']:
             self.ui.Button_PerviousStep.setEnabled(False)
             self.ui.Button_NextStep.setEnabled(False)
             self.ui.Button_Auto.setEnabled(False)
+            self.ui.Button_ShowStats.setEnabled(False)
             self.ui.Text_Information.setText("No solution")
             return
 
+        # record stats
+        # self.statsOfFunction[function]=function
+        self.statsOfFunction[function] = solution
+
         # information show
-        self.ui.Text_Information.setText("There are {} steps\n\nGenerated nodes: {}\nExpanded nodes:{}\n\nTime used: {} ms"
-                                         .format(len(self.path)-1, solution['generationCount'], solution['expandCount'], int(solution['time']*1000)))
+        if not isStats:
+            self.ui.Text_Information.setText("There are {} steps\n\nGenerated nodes: {}\nExpanded nodes:{}\n\nTime used: {} ms"
+                                             .format(len(self.path)-1, solution['generationCount'], solution['expandCount'], int(solution['time']*1000)))
 
         # set ui ability
         if self.ui.Check_GetTree.isChecked():
@@ -112,6 +164,16 @@ class EightDigitsUI:
         self.ui.Button_PerviousStep.setEnabled(False)
         self.ui.Button_NextStep.setEnabled(True)
         self.ui.Button_Auto.setEnabled(True)
+        self.ui.Button_ShowStats.setEnabled(True)
+
+    def random(self):
+        self.initLCD(True)
+
+    def reset(self):
+        self.initLCD(False)
+
+    def changeFunction(self):
+        self.initLCD(False)
 
     def nextStep(self):
         self.currentStep += 1
@@ -146,7 +208,7 @@ class EightDigitsUI:
         if self.currentStep <= 0:
             self.currentStep = 0
             self.ui.Button_PerviousStep.setEnabled(False)
-            
+
     def clickCheckGetTree(self):
         if self.ui.Check_GetTree.isChecked():
             self.ui.Button_Show.setEnabled(True)
@@ -178,12 +240,13 @@ class EightDigitsUI:
 #         [1, 9, 2, 4, 5, 3, 7, 8, 6], [1, 2, 9, 4, 5,
 #                                       3, 7, 8, 6], [1, 2, 3, 4, 5, 9, 7, 8, 6],
 #         [1, 2, 3, 4, 5, 6, 7, 8, 9]]
-
 app = QApplication([])
 # set style sheet
-app.setStyleSheet(open('other/qss.css', 'r').read())
+
 # create window
-window = EightDigitsUI()
+main = EightDigitsUI()
+# main.setWindowIcon('img/icon.png')
+statsUi = EightDigitsStatsUI()
 # show window
-window.ui.show()
+main.ui.show()
 app.exec_()
