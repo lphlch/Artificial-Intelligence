@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>EightDigitPuzzle</class>
+ <widget class="QMainWindow" name="EightDigitPuzzle">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -23,7 +23,12 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>EightDigitPuzzle</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normalon>img/icon.png</normalon>
+   </iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="minimumSize">
@@ -38,19 +43,6 @@
      <height>650</height>
     </size>
    </property>
-   <widget class="QPushButton" name="Button_Show">
-    <property name="geometry">
-     <rect>
-      <x>530</x>
-      <y>350</y>
-      <width>221</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>show tree</string>
-    </property>
-   </widget>
    <widget class="QTextBrowser" name="Text_Information">
     <property name="geometry">
      <rect>
@@ -208,45 +200,6 @@
      </item>
     </layout>
    </widget>
-   <widget class="QPushButton" name="Button_NextStep">
-    <property name="geometry">
-     <rect>
-      <x>350</x>
-      <y>500</y>
-      <width>151</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Next step -&gt;</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="Button_PerviousStep">
-    <property name="geometry">
-     <rect>
-      <x>50</x>
-      <y>500</y>
-      <width>151</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>&lt;- Pervious step</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="Button_Init">
-    <property name="geometry">
-     <rect>
-      <x>210</x>
-      <y>500</y>
-      <width>131</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Random start</string>
-    </property>
-   </widget>
    <widget class="QCheckBox" name="Check_GetTree">
     <property name="geometry">
      <rect>
@@ -275,19 +228,6 @@ to get a tree view</string>
     </property>
     <property name="value">
      <number>0</number>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="Button_Auto">
-    <property name="geometry">
-     <rect>
-      <x>530</x>
-      <y>500</y>
-      <width>211</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Auto playing</string>
     </property>
    </widget>
    <widget class="QComboBox" name="Combo_Function">
@@ -390,15 +330,98 @@ to get a tree view</string>
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <zorder>Button_Show</zorder>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>500</y>
+      <width>451</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QPushButton" name="Button_PerviousStep">
+       <property name="text">
+        <string>&lt;- Pervious step</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="Button_Auto">
+       <property name="text">
+        <string>Auto playing</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="Button_NextStep">
+       <property name="text">
+        <string>Next step -&gt;</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>530</x>
+      <y>500</y>
+      <width>221</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="Button_Init">
+       <property name="text">
+        <string>Random</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="Button_Reset">
+       <property name="text">
+        <string>Restart</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>530</x>
+      <y>350</y>
+      <width>221</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QPushButton" name="Button_Show">
+       <property name="text">
+        <string>Show tree</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="Button_ShowStats">
+       <property name="text">
+        <string>Show stats</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <zorder>layoutWidget</zorder>
+   <zorder>layoutWidget</zorder>
+   <zorder>layoutWidget</zorder>
    <zorder>Text_Information</zorder>
    <zorder>gridLayoutWidget</zorder>
-   <zorder>Button_NextStep</zorder>
-   <zorder>Button_PerviousStep</zorder>
-   <zorder>Button_Init</zorder>
    <zorder>Check_GetTree</zorder>
    <zorder>Progress_Steps</zorder>
-   <zorder>Button_Auto</zorder>
    <zorder>Combo_Function</zorder>
    <zorder>Label_SelectFunction</zorder>
    <zorder>Label_Title</zorder>
@@ -416,8 +439,6 @@ to get a tree view</string>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
- <resources>
-  <include location="../styledemo_2/styledemo/other/qss.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>
