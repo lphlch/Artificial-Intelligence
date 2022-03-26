@@ -6,7 +6,7 @@ class TreeCreator:
     def __init__(self) -> None:
         self.dot = gv.Digraph(comment='Tree',strict=True)
 
-    def addNode(self, label: list) -> None:
+    def addNode(self, label: list,cost) -> None:
         """add a node to the graph
 
         Args:
@@ -14,7 +14,7 @@ class TreeCreator:
         """
         self.dot.node(str(label),
                       (str(label[0:3])+'\n'+str(label[3:6])+'\n'+str(label[6:9]))
-                      .replace('9','  ').replace(',',' ').replace('[',' ').replace(']',' '),shape='box')
+                      .replace('9','  ').replace(',',' ').replace('[',' ').replace(']',' ')+'\nCost: '+str(int(cost)),shape='box')
         
     def setParent(self, parent: str, child: str) -> None:
         """set the parent of the node
@@ -40,6 +40,11 @@ class TreeCreator:
         while goal.parent is not None:
             self.dot.edge(str(goal.parent.status),str(goal.status),color='red')
             goal=goal.parent
+            
+    def clear(self) -> None:
+        """clear the graph
+        """
+        self.dot.clear()
 
 # t = TreeCreator()
 # l=[1,2,3]

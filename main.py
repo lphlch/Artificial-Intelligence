@@ -193,7 +193,7 @@ def search(list, function, isTreeNeed):
     pq.put((0, startList))
     if isTreeNeed:
         # add the node to graph
-        tree.addNode(startList.status)
+        tree.addNode(startList.status,evaluateNode(startList,function))
 
     while not pq.empty():
         node = pq.get()[1]
@@ -213,13 +213,14 @@ def search(list, function, isTreeNeed):
             start = time()
             if tuple(nextNode.status) not in expandedNodes:
                 expandCount += 1
+                cost=evaluateNode(nextNode,function)
                 
                 if isTreeNeed:
                     # add the node to graph
-                    tree.addNode(nextNode.status)
+                    tree.addNode(nextNode.status,cost)
                     tree.setParent(nextNode.parent.status, nextNode.status)
                 
-                pq.put((evaluateNode(nextNode,function), nextNode))
+                pq.put((cost, nextNode))
 
 
     print("Generated nodes:", generationCount)
@@ -249,13 +250,15 @@ def pathGetting(node):
         #print(node)
         path.insert(0,node.status)
         node = node.parent
-    print(node)
+    print(node,node.cost)
     return path
 
 def clear():
     for object in expandedNodes:
         del object
     expandedNodes.clear()
+    tree.clear()
+    
     
     
     
