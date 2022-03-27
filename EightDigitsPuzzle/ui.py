@@ -10,22 +10,34 @@ from stats import stats
 
 
 def callEightDigitsStatsUI():
+    """show stats UI
+    """    
     statsUi.ui.show()
     statsUi.clickShow()
 
 
 class EightDigitsStatsUI:
+    """stats UI
+    """    
     def __init__(self):
+        """init stats UI
+        """        
         self.ui = QUiLoader().load('ui/stats.ui')
         self.ui.setStyleSheet(open('other/qss.css', 'r').read())
 
     def clickShow(self):
+        """set picture
+        """        
         self.ui.L_G.setPixmap(QPixmap('img/stats.png'))
 
 
 class EightDigitsUI:
+    """main UI
+    """    
 
     def __init__(self):
+        """init UI
+        """        
         # self.windowIcon = QIcon('img/icon.png')
         self.ui = QUiLoader().load('ui/form.ui')
         self.ui.setStyleSheet(open('other/qss.css', 'r').read())
@@ -56,6 +68,11 @@ class EightDigitsUI:
         self.updateLCD([1, 2, 3, 4, 5, 6, 7, 8, 9])
 
     def updateLCD(self, step):
+        """update LCD
+
+        Args:
+            step (list): status to be shown
+        """        
         # number change
         for i in range(0, 9):
             self.LCDList[i].display(step[i])
@@ -84,7 +101,8 @@ class EightDigitsUI:
                     num.setStyleSheet("color:white")
 
     def showImg(self):
-        # show image by system default image viewer
+        """show image by system default image viewer
+        """        
         filePath = 'img/tree.png'
         try:
             img = Image.open(filePath)
@@ -94,6 +112,8 @@ class EightDigitsUI:
                 "Error: Can't open image\nPlease check if you have begun to solve puzzle")
 
     def showStats(self):
+        """show stats UI
+        """        
         self.initLCD(isStats=True, function='Manhattan Distance')
         self.initLCD(isStats=True,  function='Euclidean Distance')
         self.initLCD(isStats=True, function='Cosine Distance')
@@ -104,6 +124,13 @@ class EightDigitsUI:
         callEightDigitsStatsUI()
 
     def initLCD(self, isRandom=False, function=None, isStats=False):
+        """initialize LCD
+
+        Args:
+            isRandom (bool, optional): if is random status needed. Defaults to False.
+            function (str, optional): function name. Defaults to None.
+            isStats (bool, optional): if is stats needed. Defaults to False.
+        """        
         solution = {}
         isDraw = False
 
@@ -167,15 +194,23 @@ class EightDigitsUI:
         self.ui.Button_ShowStats.setEnabled(True)
 
     def random(self):
+        """random status generator
+        """        
         self.initLCD(True)
 
     def reset(self):
+        """reset status
+        """        
         self.initLCD(False)
 
     def changeFunction(self):
+        """called when function changed
+        """        
         self.initLCD(False)
 
     def nextStep(self):
+        """do next step
+        """        
         self.currentStep += 1
 
         # set ui
@@ -193,6 +228,8 @@ class EightDigitsUI:
             self.ui.Button_Auto.setEnabled(False)
 
     def perviousStep(self):
+        """do pervious step
+        """        
 
         self.currentStep -= 1
 
@@ -210,18 +247,24 @@ class EightDigitsUI:
             self.ui.Button_PerviousStep.setEnabled(False)
 
     def clickCheckGetTree(self):
+        """called when check box changed
+        """        
         if self.ui.Check_GetTree.isChecked():
             self.ui.Button_Show.setEnabled(True)
         else:
             self.ui.Button_Show.setEnabled(False)
 
     def autoStartTimer(self):
+        """start a timer to do auto steps
+        """        
         print("Timer start")
         self.autoTimer = QTimer()
         self.autoTimer.start(350)
         self.autoTimer.timeout.connect(self.autoNextStep)
 
     def autoNextStep(self):
+        """called when auto timer timeout, auto do next step
+        """        
         print("time reached")
 
         self.nextStep()
@@ -235,18 +278,14 @@ class EightDigitsUI:
     #     self.ui.LCD_5.hide()
 
 
-# global path
-# path = [[4, 1, 2, 5, 9, 3, 7, 8, 6], [4, 1, 2, 9, 5, 3, 7, 8, 6], [9, 1, 2, 4, 5, 3, 7, 8, 6],
-#         [1, 9, 2, 4, 5, 3, 7, 8, 6], [1, 2, 9, 4, 5,
-#                                       3, 7, 8, 6], [1, 2, 3, 4, 5, 9, 7, 8, 6],
-#         [1, 2, 3, 4, 5, 6, 7, 8, 9]]
-app = QApplication([])
-# set style sheet
+if __name__ == "__main__":
+    app = QApplication([])
+    # set style sheet
 
-# create window
-main = EightDigitsUI()
-# main.setWindowIcon('img/icon.png')
-statsUi = EightDigitsStatsUI()
-# show window
-main.ui.show()
-app.exec_()
+    # create window
+    main = EightDigitsUI()
+    # main.setWindowIcon('img/icon.png')
+    statsUi = EightDigitsStatsUI()
+    # show window
+    main.ui.show()
+    app.exec_()

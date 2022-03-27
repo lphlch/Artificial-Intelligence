@@ -2,7 +2,7 @@ from queue import PriorityQueue
 
 from time import time
 from cmath import sqrt
-from numpy import dot,linalg
+from numpy import dot, linalg
 
 from tree import TreeCreator
 
@@ -11,18 +11,22 @@ expandedNodes = set()
 global emptyNum
 emptyNum = 9
 global tree
-tree=TreeCreator()
+tree = TreeCreator()
 global goal
 goal = [i for i in range(1, 10)]
-class Node:
 
-    def __init__(self, status:list, cost:float) -> None:
+
+class Node:
+    """Saving the status of the node, the cost of the node, and the parent of the node
+    """
+
+    def __init__(self, status: list, cost: float) -> None:
         """initialize a node
 
         Args:
             status (list): status of the node
             cost (float): current cost of the node
-        """        
+        """
         self.status = status
         self.cost = cost
         self.parent = None
@@ -45,7 +49,7 @@ class Node:
         """
         self.parent = parent
 
-    def swap(self, i1:int, j1:int, i2:int, j2:int) -> None:
+    def swap(self, i1: int, j1: int, i2: int, j2: int) -> None:
         """swap two elements in the status
 
         Args:
@@ -57,7 +61,8 @@ class Node:
         self.status[(i1-1)*3+j1-1], self.status[(i2-1)*3+j2 -
                                                 1] = self.status[(i2-1)*3+j2-1], self.status[(i1-1)*3+j1-1]
 
-def twoToOne(matrix:list)->list:
+
+def twoToOne(matrix: list) -> list:
     """transform the two-dimensional list to one-dimensional list
 
     Args:
@@ -75,7 +80,8 @@ def twoToOne(matrix:list)->list:
 
     return oneDimensionalList
 
-def oneToTwo(list:list)->list:
+
+def oneToTwo(list: list) -> list:
     """transform the one-dimensional list to two-dimensional list
 
     Args:
@@ -97,6 +103,14 @@ def oneToTwo(list:list)->list:
 
 
 def manhattanDistance(status):
+    """manhattan distance
+
+    Args:
+        status (list): status of the node
+
+    Returns:
+        int: value
+    """    
     dis = 0
     for i in range(0, 9):
         if status[i] != 0 and status[i] != 9:
@@ -106,6 +120,14 @@ def manhattanDistance(status):
 
 
 def euclideanDistance(status):
+    """euclidean distance
+
+    Args:
+        status (list): status of the node
+
+    Returns:
+        float: value
+    """    
     dis = 0
     for i in range(0, 9):
         if status[i] != 0 and status[i] != 9:
@@ -115,25 +137,55 @@ def euclideanDistance(status):
 
 
 def cosineDistance(status):
+    """cosine distance
+
+    Args:
+        status (list): status of the node
+
+    Returns:
+        float: value
+    """    
     cos = dot(status, goal) / \
         (linalg.norm(status)*(linalg.norm(goal)))
     return (1-cos)*50
 
 
 def heuristic(status, function):
+    """return the heuristic value of the node
+
+    Args:
+        status (list): current status of the node
+        function (function): function to be used for heuristics
+
+    Returns:
+        int/float: heuristic value of the node
+    """    
     return function(status)
 
 
-def evaluateNode(node,function):
+def evaluateNode(node, function):
+    """evaluate the node value
+
+    Args:
+        node (Node): node to be evaluated
+        function (function): function to be used for heuristics
+
+    Returns:
+        int/float: value of the node
+    """
     # add current cost and heuristic cost
     return node.cost+heuristic(node.status, function)
 
 
 def expandNode(node):
-    # these child nodes should be set parent to the current node
+    """find next nodes to expand
 
-    start = time()
+    Args:
+        node (Node): current node
 
+    Returns:
+        list: lists of next nodes
+    """
     # temporary transform the list to two-dimensional list, with boundary 0
     twoDimensionalList = oneToTwo(node.status)
 
@@ -183,52 +235,70 @@ def expandNode(node):
 
 
 def search(list, function, isTreeNeed):
+    """search for the goal status
+
+    Args:
+        list (list): start status
+        function (function): function to calculate the heuristic value
+        isTreeNeed (bool): if the tree is needed. Cautious that only built-in status can be used!
+
+    Returns:
+        int, int, Node: tuple of generated nodes, expanded nodes, goal node
+    """
     startList = Node(list, 0)
     generationCount = 0
     expandCount = 0
 
     # search for solution
     pq = PriorityQueue()
-    # priority queue stores nodes as a list of [priority, node]
+    # priority queue stores nodes as a tuple of (priority, node)
     pq.put((0, startList))
     if isTreeNeed:
         # add the node to graph
-        tree.addNode(startList.status,evaluateNode(startList,function))
+        tree.addNode(startList.status, evaluateNode(startList, function))
 
     while not pq.empty():
         node = pq.get()[1]
         generationCount += 1
 
+        # add the node to set
         expandedNodes.add(tuple(node.status))
-            
+
         # print(node)
 
         if node.status == goal:
             print("Generated nodes:", generationCount)
             print("Expanded nodes:", expandCount)
-            return generationCount, expandCount ,node
+            return generationCount, expandCount, node
 
         for nextNode in expandNode(node):
+
             # if was expanded before, skip
-            start = time()
             if tuple(nextNode.status) not in expandedNodes:
                 expandCount += 1
-                cost=evaluateNode(nextNode,function)
-                
+                cost = evaluateNode(nextNode, function)
+
                 if isTreeNeed:
                     # add the node to graph
-                    tree.addNode(nextNode.status,cost)
+                    tree.addNode(nextNode.status, cost)
                     tree.setParent(nextNode.parent.status, nextNode.status)
-                
-                pq.put((cost, nextNode))
 
+                pq.put((cost, nextNode))
 
     print("Generated nodes:", generationCount)
     print("Expanded nodes:", expandCount)
     print("There is no solution")
-    
 
-def judgeSolution(l):
+
+def judgeSolution(l) -> bool:
+    """judge if there is a solution
+
+    Args:
+        l (list): list to be judged
+
+    Returns:
+        bool: if there is a solution
+    """
     sum = 0
     tempList = l.copy()
     del tempList[tempList.index(9)]
@@ -244,66 +314,83 @@ def judgeSolution(l):
 
 
 def pathGetting(node):
-    path=[]
+    """generate the path
+
+    Args:
+        node (Node): goal node. Note that the node must be searched before
+
+    Returns:
+        list: path from start to goal
+    """
+    path = []
     #print("Path to goal:")
     while node.parent != None:
-        #print(node)
-        path.insert(0,node.status)
+        # print(node)
+        path.insert(0, node.status)
         node = node.parent
-    print(node,node.cost)
+    print(node, node.cost)
     return path
 
+
 def clear():
+    """clear grabage
+    """
     for object in expandedNodes:
         del object
     expandedNodes.clear()
     tree.clear()
-    
-    
-    
-    
-def solve(isTreeNeed,function,randomList):
+
+
+def solve(isTreeNeed: bool, function, randomList):
+    """solve the puzzle
+
+    Args:
+        isTreeNeed (bool): if is tree needed. Use built-in status if True
+        function (str): function name to calculate the heuristic value
+        randomList (list): status to be solved
+
+    Returns:
+        dic: information of the solution
+    """
     clear()
     timestart = time()
-    strFunctions=function.split()
+    strFunctions = function.split()
     #! use eval function to transform the string to function name
-    function=eval(strFunctions[0].lower()+strFunctions[1])
-    
+    function = eval(strFunctions[0].lower()+strFunctions[1])
+
     # randomList = goal.copy()
     # shuffle(randomList)                     # shuffle the list randomly
-    
+
     #! expandedNodes.add(tuple(randomList)) can not add!
-    isSolvable=True
-    
+    isSolvable = True
+
     if isTreeNeed:
-        randomList=[4,1,2,5,8,3,7,9,6]  # small tree
-        
-    #randomList = [5, 9, 4, 2, 7, 6, 1, 8, 3] # 5093
+        randomList = [4, 1, 2, 5, 8, 3, 7, 9, 6]  # small tree
+
+    # randomList = [5, 9, 4, 2, 7, 6, 1, 8, 3] # 5093
     print("Start:", randomList)
     if judgeSolution(randomList) != judgeSolution(goal):
         print("The initial list is not solvable.")
-        isSolvable=False
-        path=[randomList]
-        #! worng!
-        #//path=randomList
-        generationCount=expandCount=timeTotal=None
+        isSolvable = False
+        path = [randomList]
+        #! wrong!
+        # //path=randomList
+        generationCount = expandCount = timeTotal = None
 
     if isSolvable:
-        #function = manhattanDistance  # heuristic function
-
         print(function(randomList))
-        generationCount,expandCount,node = search(randomList, function,isTreeNeed)
+        generationCount, expandCount, node = search(
+            randomList, function, isTreeNeed)
 
-        path=pathGetting(node)
+        path = pathGetting(node)
         print(path)
-        #pathGetting(goal)
 
-        print("from",randomList, "to",goal)
+        print("from", randomList, "to", goal)
         timeTotal = time()-timestart
         print("total time used:", timeTotal)
 
     if isTreeNeed:
         tree.highlightSolutionPath(node)
         tree.create()
-        
-    return {'path':[randomList]+path, 'isSolvable':isSolvable,'generationCount':generationCount, 'expandCount':expandCount,'time':timeTotal}
+
+    return {'path': [randomList]+path, 'isSolvable': isSolvable, 'generationCount': generationCount, 'expandCount': expandCount, 'time': timeTotal}
