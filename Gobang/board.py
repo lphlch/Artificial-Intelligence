@@ -24,6 +24,14 @@ Scored = 0
 
 
 def deepcopy(s):
+    """deep copy board status
+
+    Args:
+        s (list of list 15*15): a list of list
+
+    Returns:
+        list of list 15*15: deep copy of s
+    """
     #! this deepcopy unfold will reduce 80% time cost
     new = []
     new = [[s[0][0], s[0][1], s[0][2], s[0][3], s[0][4], s[0][5], s[0][6], s[0][7], s[0][8], s[0][9], s[0][10], s[0][11], s[0][12], s[0][13], s[0][14]],
@@ -90,6 +98,15 @@ def getValidPieces(lines, flag):
 
 
 def getScore(validLines, level):
+    """get score of valid pieces
+
+    Args:
+        validLines (list): valid pieces
+        level (int): level of AI
+
+    Returns:
+        int: score
+    """
     global Scored
     Scored += 1
     # matching
@@ -195,6 +212,17 @@ def getScore(validLines, level):
 
 
 def getValidSteps(status, centre: tuple, flag, level):
+    """get valid steps of chess
+
+    Args:
+        status (list): status of chess
+        centre (tuple): current position of chess
+        flag (char): current player
+        level (int): level
+
+    Returns:
+        list: valid steps list
+    """
     validSteps = []
 
     validPos = [[0]*MAXSIZE for _ in range(MAXSIZE)]
@@ -211,23 +239,8 @@ def getValidSteps(status, centre: tuple, flag, level):
             if validPos[x][y] == 1:
                 validSteps.append((x, y))
 
-    # centreX,centreY=centre  # only search around centre step 3
-    # for x in range(centreX-5,centreX+6):
-    #     if x<0 or x>MAXSIZE-1:
-    #         continue
-    #     for y in range(centreY-5,centreY+6):
-    #         if y<0 or y>MAXSIZE-1:
-    #             continue
-
-    #         if status[x][y]==EMPTY:
-    #             validSteps.append((x,y))
-
-    # print("validSteps:",len(validSteps))
-    # tmpBoard=board(deepcopy(status),curStepPos=(None,None), level=level)
-    # blackLines = getValidPieces(tmpBoard.getAllLines(), BLACK)
-    # bs = getScore(blackLines, level)
     greedyList = []
-    
+
     for step in validSteps:
         greedyStatus = deepcopy(status)
         greedyStatus[step[0]][step[1]] = flag
@@ -239,7 +252,7 @@ def getValidSteps(status, centre: tuple, flag, level):
         ws = getScore(whiteLines, level)
 
         greedyScore = ws-bs
-        if flag==WHITE:
+        if flag == WHITE:
             heappush(greedyList, (-greedyScore, step))
         else:
             heappush(greedyList, (greedyScore, step))
@@ -256,6 +269,14 @@ def getValidSteps(status, centre: tuple, flag, level):
 
 
 def getLine(status):
+    """get every line
+
+    Args:
+        status (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     l = []
     for line in status:
         l.append(''.join(line))    # make a string
@@ -263,6 +284,14 @@ def getLine(status):
 
 
 def getColumn(s):
+    """get every column
+
+    Args:
+        s (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     l = []
     l.append(''.join([s[0][0], s[1][0], s[2][0], s[3][0], s[4][0], s[5][0], s[6][0],
              s[7][0], s[8][0], s[9][0], s[10][0], s[11][0], s[12][0], s[13][0], s[14][0]]))
@@ -304,6 +333,14 @@ def getColumn(s):
 
 
 def getDiagonal1(s):
+    """get every diagonal from left to right
+
+    Args:
+        s (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     l = []
     #! this for loop unfold can save 20% time
     l.append(''.join([s[0][10], s[1][11], s[2][12], s[3][13], s[4][14]]))
@@ -419,15 +456,15 @@ class board:
     status = [['O']*15 for _ in range(15)]
     previous = None
     curStepPos = (None, None)    # (x,y)
-    whitePos=(None,None)
+    whitePos = (None, None)
 
-    def __init__(self, status, level, previous=None, curStepPos=(None, None),whitePos=(None,None)) -> None:
+    def __init__(self, status, level, previous=None, curStepPos=(None, None), whitePos=(None, None)) -> None:
         self.status = status
         self.previous = previous
         self.curStepPos = curStepPos
         self.level = level
         self.maxDepth = level*2
-        self.whitePos=whitePos
+        self.whitePos = whitePos
 
     def isFinish(self) -> bool:
         """judge is the game is finished
@@ -489,14 +526,14 @@ class board:
         if count >= 5:
             return True
         while True:
-            if curX-1 >= 0 and curY+1 <MAXSIZE and self.status[curX-1][curY+1] == flag:
+            if curX-1 >= 0 and curY+1 < MAXSIZE and self.status[curX-1][curY+1] == flag:
                 curX -= 1
                 curY += 1
             else:
                 break
         count = 1
         while True:
-            if curX+1 < MAXSIZE-1 and curY-1 >=0 and self.status[curX+1][curY-1] == flag:
+            if curX+1 < MAXSIZE-1 and curY-1 >= 0 and self.status[curX+1][curY-1] == flag:
                 count += 1
                 curX += 1
                 curY -= 1
@@ -508,49 +545,23 @@ class board:
         return False
 
     def getAllLines(self):
-        # read every lines in the board
+        """read every lines in the board
+
+        Returns:
+            _type_: list of lines
+        """
         lines = []
 
         # get every line
         lines += getLine(self.status)
-        # for line in range(MAXSIZE):
-        #     lines.append(''.join(self.status[line]))    # make a string
 
         # get every column
         lines += getColumn(self.status)
-        # for column in range(MAXSIZE):
-        #     temp = []
-        #     for line in range(MAXSIZE):
-        #         temp.append(self.status[line][column])
-        #     lines.append(''.join(temp))
 
-        # get every diagonal which is from left-up to right-down and length greater than 4
+        # get every diagonal
         lines += getDiagonal1(self.status)
-        # for column in range(4, MAXSIZE):
-        #     leftUp = []
-        #     for i in range(column+1):
-        #         leftUp.append(self.status[column-i][i])
-        #     lines.append(''.join(leftUp))
-        # for line in range(MAXSIZE-5):
-        #     leftUp = []
-        #     for j in range(MAXSIZE-1, line, -1):
-        #         leftUp.append(self.status[j][line+MAXSIZE-j])
-        #     lines.append(''.join(leftUp))
-
-        # get every diagonal which is from left-down to right-up and length greater than 4
         lines += getDiagonal2(self.status)
-        # for y in range(MAXSIZE - 4):
-        #     leftDown = []
-        #     for i in range(MAXSIZE-y):
-        #         leftDown.append(self.status[y+i][i])
-        #     lines.append(''.join(leftDown))
-        # for x in range(MAXSIZE - 5):
-        #     leftDown = []
-        #     for j in range(MAXSIZE-x-1):
-        #         leftDown.append(self.status[j][x+j+1])
-        #     lines.append(''.join(leftDown))
 
-        # print("total lines:",len(lines))
         return lines
 
     def evaluate(self) -> int:
@@ -573,12 +584,27 @@ class board:
         return score
 
     def search(self):
+        """search for best move
+
+        Returns:
+            _type_: next move position, value
+        """
         value, nexStepPos, a, b = self.maxValue(-inf, inf, 0)
         print("value:", value, "nexStepPos:", nexStepPos,
               "a:", a, "b:", b, "depth:", self.maxDepth)
-        return nexStepPos,value
+        return nexStepPos, value
 
     def maxValue(self, alpha, beta, depth):
+        """get max value
+
+        Args:
+            alpha (_type_): _description_
+            beta (_type_): _description_
+            depth (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
         if self.isFinish():
             return self.evaluate(), self.curStepPos, alpha, beta
         # if reach the maximum depth, return current score
@@ -590,7 +616,8 @@ class board:
         value = -inf
         nexStepPos = (None, None)
 
-        validSteps=getValidSteps(self.status, self.curStepPos, BLACK, level=self.level)
+        validSteps = getValidSteps(
+            self.status, self.curStepPos, BLACK, level=self.level)
         for stepPos in validSteps:
             x, y = stepPos
             nextStatus = deepcopy(self.status)
@@ -620,6 +647,16 @@ class board:
         return value, nexStepPos, alpha, beta
 
     def minValue(self, alpha, beta, depth):
+        """get min value
+
+        Args:
+            alpha (_type_): _description_
+            beta (_type_): _description_
+            depth (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
         if self.isFinish():
             return self.evaluate(), self.curStepPos, alpha, beta
         # if reach the maximum depth, return current score
@@ -630,7 +667,8 @@ class board:
 
         value = inf
         nexStepPos = (None, None)
-        validSteps=getValidSteps(self.status, self.curStepPos, BLACK, level=self.level)
+        validSteps = getValidSteps(
+            self.status, self.curStepPos, BLACK, level=self.level)
         for stepPos in validSteps:
             x, y = stepPos
             nextStatus = deepcopy(self.status)
@@ -655,22 +693,36 @@ class board:
 
 if __name__ == "__main__":
     a = board([
-        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
-        ['O', '@', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
-        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
-        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
-        ['O', 'O', 'O', 'O', '@', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
-        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
-        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'X', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
-        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'X', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
-        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'X', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
-        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
-        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
-        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
-        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
-        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O',
+            'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', '@', 'O', 'O', 'O', 'O', 'O', 'O',
+            'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O',
+            'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O',
+            'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', '@', 'O', 'O', 'O',
+            'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O',
+            'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'X',
+            'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'X',
+            'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'X',
+            'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O',
+            'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O',
+            'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O',
+            'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O',
+            'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O',
+            'O', 'O', 'O', 'O', 'O', 'O', 'O'],
         ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
-    ], curStepPos=(6,7), level=NORMAL)
+    ], curStepPos=(6, 7), level=NORMAL)
     startTime = time()
     a.evaluate()
     a.search()
