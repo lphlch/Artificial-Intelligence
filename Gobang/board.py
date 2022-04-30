@@ -491,7 +491,8 @@ class board:
                 break
         if count >= 5:
             return True
-
+        
+        curX, curY = self.curStepPos
         # check line
         while True:
             if curY-1 >= 0 and self.status[curX][curY-1] == flag:
@@ -507,7 +508,8 @@ class board:
                 break
         if count >= 5:
             return True
-
+        
+        curX, curY = self.curStepPos
         # check diagonal
         while True:
             if curX-1 >= 0 and curY-1 >= 0 and self.status[curX-1][curY-1] == flag:
@@ -525,6 +527,8 @@ class board:
                 break
         if count >= 5:
             return True
+        
+        curX, curY = self.curStepPos
         while True:
             if curX-1 >= 0 and curY+1 < MAXSIZE and self.status[curX-1][curY+1] == flag:
                 curX -= 1
@@ -693,18 +697,12 @@ class board:
 
 if __name__ == "__main__":
     a = board([
-        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O',
-            'O', 'O', 'O', 'O', 'O', 'O', 'O'],
-        ['O', '@', 'O', 'O', 'O', 'O', 'O', 'O',
-            'O', 'O', 'O', 'O', 'O', 'O', 'O'],
-        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O',
-            'O', 'O', 'O', 'O', 'O', 'O', 'O'],
-        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O',
-            'O', 'O', 'O', 'O', 'O', 'O', 'O'],
-        ['O', 'O', 'O', 'O', '@', 'O', 'O', 'O',
-            'O', 'O', 'O', 'O', 'O', 'O', 'O'],
-        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O',
-            'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O','O', 'O', 'O', 'O', 'O', 'O', 'X'],
+        ['O', '@', 'O', 'O', 'O', 'O', 'O', 'O','O', 'O', 'O', 'O', 'O', 'X', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O','O', 'O', 'O', 'O', 'X', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O','O', 'O', 'O', 'X', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', '@', 'O', 'O', 'O','O', 'O', 'X', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O','O', 'O', 'O', 'O', 'O', 'O', 'O'],
         ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'X',
             'O', 'O', 'O', 'O', 'O', 'O', 'O'],
         ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'X',
@@ -722,8 +720,9 @@ if __name__ == "__main__":
         ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O',
             'O', 'O', 'O', 'O', 'O', 'O', 'O'],
         ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
-    ], curStepPos=(6, 7), level=NORMAL)
+    ], curStepPos=(0, 14), level=NORMAL)
     startTime = time()
+    print(a.isFinish())
     a.evaluate()
     a.search()
     print("time:", time()-startTime)

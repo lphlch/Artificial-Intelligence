@@ -332,6 +332,7 @@ class Gobang(QMainWindow):
 
         # check if ai win
         isWhiteWin = newBoard.isFinish()
+        print(newBoard.status)
         if isWhiteWin:
             aiSignal.aiWin.emit()
 
