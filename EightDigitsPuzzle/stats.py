@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt
 class stats:
     def __init__(self):
         """initialize
-        """        
+        """
         pass
 
     def draw(self, data):

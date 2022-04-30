@@ -5,7 +5,7 @@ class TreeCreator:
 
     def __init__(self) -> None:
         """initialize
-        """        
+        """
         self.dot = gv.Digraph(comment='Tree', strict=True)
 
     def addNode(self, label: list, cost) -> None:
