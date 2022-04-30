@@ -94,7 +94,7 @@ def getScore(validLines, level):
     Scored += 1
     # matching
     S2, L2, S3, L3, S4, L4, L5 = 0, 1, 2, 3, 4, 5, 6
-    weight = [5, 20, 30, 100, 1000, 5000, 100000]
+    weight = [5, 20, 30, 200, 1000, 5000, 100000]
     # LX: X continuous
     # SX: X continuous with one direction blocked
     count = [0]*7
@@ -223,8 +223,11 @@ def getValidSteps(status, centre: tuple, flag, level):
     #             validSteps.append((x,y))
 
     # print("validSteps:",len(validSteps))
-
+    # tmpBoard=board(deepcopy(status),curStepPos=(None,None), level=level)
+    # blackLines = getValidPieces(tmpBoard.getAllLines(), BLACK)
+    # bs = getScore(blackLines, level)
     greedyList = []
+    
     for step in validSteps:
         greedyStatus = deepcopy(status)
         greedyStatus[step[0]][step[1]] = flag
@@ -236,7 +239,10 @@ def getValidSteps(status, centre: tuple, flag, level):
         ws = getScore(whiteLines, level)
 
         greedyScore = ws-bs
-        heappush(greedyList, (-greedyScore, step))
+        if flag==WHITE:
+            heappush(greedyList, (-greedyScore, step))
+        else:
+            heappush(greedyList, (greedyScore, step))
 
     searchList = []
     count = 0
@@ -413,13 +419,15 @@ class board:
     status = [['O']*15 for _ in range(15)]
     previous = None
     curStepPos = (None, None)    # (x,y)
+    whitePos=(None,None)
 
-    def __init__(self, status, level, previous=None, curStepPos=(None, None)) -> None:
+    def __init__(self, status, level, previous=None, curStepPos=(None, None),whitePos=(None,None)) -> None:
         self.status = status
         self.previous = previous
         self.curStepPos = curStepPos
         self.level = level
         self.maxDepth = level*2
+        self.whitePos=whitePos
 
     def isFinish(self) -> bool:
         """judge is the game is finished
@@ -472,10 +480,26 @@ class board:
                 break
         count = 1
         while True:
-            if curX+1 <= MAXSIZE-1 and curY+1 <= MAXSIZE-1 and self.status[curX+1][curY+1] == flag:
+            if curX+1 < MAXSIZE-1 and curY+1 <= MAXSIZE-1 and self.status[curX+1][curY+1] == flag:
                 count += 1
                 curX += 1
                 curY += 1
+            else:
+                break
+        if count >= 5:
+            return True
+        while True:
+            if curX-1 >= 0 and curY+1 <MAXSIZE and self.status[curX-1][curY+1] == flag:
+                curX -= 1
+                curY += 1
+            else:
+                break
+        count = 1
+        while True:
+            if curX+1 < MAXSIZE-1 and curY-1 >=0 and self.status[curX+1][curY-1] == flag:
+                count += 1
+                curX += 1
+                curY -= 1
             else:
                 break
         if count >= 5:
@@ -552,7 +576,7 @@ class board:
         value, nexStepPos, a, b = self.maxValue(-inf, inf, 0)
         print("value:", value, "nexStepPos:", nexStepPos,
               "a:", a, "b:", b, "depth:", self.maxDepth)
-        return nexStepPos
+        return nexStepPos,value
 
     def maxValue(self, alpha, beta, depth):
         if self.isFinish():
@@ -566,7 +590,8 @@ class board:
         value = -inf
         nexStepPos = (None, None)
 
-        for stepPos in getValidSteps(self.status, self.curStepPos, WHITE, level=self.level):
+        validSteps=getValidSteps(self.status, self.curStepPos, BLACK, level=self.level)
+        for stepPos in validSteps:
             x, y = stepPos
             nextStatus = deepcopy(self.status)
             # ! white is next step. if black, will cause the opponent to win
@@ -605,8 +630,8 @@ class board:
 
         value = inf
         nexStepPos = (None, None)
-
-        for stepPos in getValidSteps(self.status, self.curStepPos, BLACK, level=self.level):
+        validSteps=getValidSteps(self.status, self.curStepPos, BLACK, level=self.level)
+        for stepPos in validSteps:
             x, y = stepPos
             nextStatus = deepcopy(self.status)
             nextStatus[x][y] = BLACK
@@ -628,25 +653,26 @@ class board:
         return value, nexStepPos, alpha, beta
 
 
-a = board([
-    ['@', '@', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
-    ['@', '@', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
-    ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
-    ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
-    ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
-    ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
-    ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
-    ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
-    ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
-    ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
-    ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
-    ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
-    ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
-    ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
-    ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'X']
-], curStepPos=(14, 14), level=HARD)
-startTime = time()
-a.evaluate()
-a.search()
-print("time:", time()-startTime)
-print("Searched:", Searched, "Scored:", Scored, "Level:", a.level)
+if __name__ == "__main__":
+    a = board([
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', '@', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', '@', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'X', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'X', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'X', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
+    ], curStepPos=(6,7), level=NORMAL)
+    startTime = time()
+    a.evaluate()
+    a.search()
+    print("time:", time()-startTime)
+    print("Searched:", Searched, "Scored:", Scored, "Level:", a.level)
