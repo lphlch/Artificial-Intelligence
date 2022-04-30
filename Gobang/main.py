@@ -179,6 +179,22 @@ class Gobang(QMainWindow):
         self.Text_Information.clear()
         self.updateLCD(0)
         self.currBoard = board([['O']*15 for _ in range(15)], self.level)
+        # self.currBoard = board([
+        # ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O','O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        # ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O','O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        # ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O','O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        # ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O','O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        # ['O', 'O', 'O', 'O', '@', 'O', 'O', 'O','O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        # ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O','O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        # ['O', 'O', 'O', 'O', 'O', 'O', '@', '@','@', 'O', 'O', 'O', 'O', 'O', 'O'],
+        # ['O', 'O', 'O', 'O', 'O', 'O', '@', 'X','@', 'O', 'O', 'O', 'O', 'O', 'O'],
+        # ['O', 'O', 'O', 'O', 'O', '@', 'X', 'X','X', '@', 'O', 'O', 'O', 'O', 'O'],
+        # ['O', 'O', 'O', 'O', 'O', 'O', 'X', 'X','X', 'X', '@', 'O', 'O', 'O', 'O'],
+        # ['O', 'O', 'O', 'O', 'O', 'X', 'O', 'O','O', 'X', 'O', 'O', 'O', 'O', 'O'],
+        # ['O', 'O', 'O', 'O', '@', 'O', 'O', 'O','O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        # ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O','O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        # ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O','O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        # ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O','O', 'O', 'O', 'O', 'O', 'O', 'O']], self.level)
         self.update()   # clear the board
 
     def aiWin(self):

@@ -231,7 +231,7 @@ def getValidSteps(status, centre: tuple, flag, level):
             if status[x][y] != EMPTY:
                 for k1 in range(-3, 4):
                     for k2 in range(-3, 4):
-                        if 0 < x+k1 < MAXSIZE and 0 < y+k2 < MAXSIZE and status[x+k1][y+k2] == EMPTY:
+                        if 0 <= x+k1 < MAXSIZE and 0 <= y+k2 < MAXSIZE and status[x+k1][y+k2] == EMPTY:
                             validPos[x+k1][y+k2] = 1
 
     for x in range(MAXSIZE):
@@ -697,30 +697,22 @@ class board:
 
 if __name__ == "__main__":
     a = board([
-        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O','O', 'O', 'O', 'O', 'O', 'O', 'X'],
-        ['O', '@', 'O', 'O', 'O', 'O', 'O', 'O','O', 'O', 'O', 'O', 'O', 'X', 'O'],
-        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O','O', 'O', 'O', 'O', 'X', 'O', 'O'],
-        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O','O', 'O', 'O', 'X', 'O', 'O', 'O'],
-        ['O', 'O', 'O', 'O', '@', 'O', 'O', 'O','O', 'O', 'X', 'O', 'O', 'O', 'O'],
         ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O','O', 'O', 'O', 'O', 'O', 'O', 'O'],
-        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'X',
-            'O', 'O', 'O', 'O', 'O', 'O', 'O'],
-        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'X',
-            'O', 'O', 'O', 'O', 'O', 'O', 'O'],
-        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'X',
-            'O', 'O', 'O', 'O', 'O', 'O', 'O'],
-        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O',
-            'O', 'O', 'O', 'O', 'O', 'O', 'O'],
-        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O',
-            'O', 'O', 'O', 'O', 'O', 'O', 'O'],
-        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O',
-            'O', 'O', 'O', 'O', 'O', 'O', 'O'],
-        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O',
-            'O', 'O', 'O', 'O', 'O', 'O', 'O'],
-        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O',
-            'O', 'O', 'O', 'O', 'O', 'O', 'O'],
-        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
-    ], curStepPos=(0, 14), level=NORMAL)
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O','O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O','O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O','O', 'O', 'O', 'O', '@', 'O', 'O'],
+        ['O', 'O', 'O', 'O', '@', 'O', 'O', 'O','O', 'O', 'O', 'X', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O','@', 'X', 'X', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', '@', '@','X', 'X', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', '@', 'X','X', 'X', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', '@', '@','X', 'X', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O','@', 'X', 'X', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O','O', '@', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O','O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O','O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O','O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O','O', 'O', 'O', 'O', 'O', 'O', 'O']
+    ], curStepPos=(5, 9), level=NORMAL)
     startTime = time()
     print(a.isFinish())
     a.evaluate()
