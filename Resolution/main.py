@@ -26,20 +26,24 @@ class Resolutions:
                                                    The relationship between line is AND.
                                                    Format like this:
                                                    S(a,b)
-                                                   S(A,B) OR F(c,D) 
-                                                   !S(A,B) OR !S(c,d)
+                                                   S(A,B) V F(c,D) 
+                                                   ~S(A,B) V ~S(c,d)
                                                    """)
         self.setupTable(self.ui.Table)
         
     def setupTable(self,table):
-        table.setColumnWidth(0,50)
-        table.setColumnWidth(1,100)
-        table.setColumnWidth(2,320)
+        table.setColumnWidth(0,40)
+        table.setColumnWidth(1,120)
+        table.setColumnWidth(2,300)
 
     
     def start(self):
+        self.ui.Table.clearContents()
+        self.ui.Label_Result.clear()
         conditions=self.readCondition()
-        self.showConditions(conditions)
+        kb=KB(conditions)
+        kb.resolution()
+        self.showSteps(kb)
     
     def showTree(self):
         pass
@@ -53,15 +57,17 @@ class Resolutions:
     def readCondition(self):
         kb=KB([])
         lines=self.ui.Text_Condition.toPlainText().split('\n')
+        count=0
         for line in lines:
-            sentence=Sentence([])
+            count+=1
+            sentence=Sentence([],'C'+str(count),'Given')
             # split line by OR
-            terms=line.split('OR')
+            terms=line.split('V')
             for term in terms:
                 # delete blank
                 term=term.strip()
                 # create term instance
-                if term[0]=='!' :
+                if term[0]=='~' :
                     term=Term(term[1],term[3],term[5],True)
                 else:
                     term=Term(term[0],term[2],term[4],False)
@@ -73,21 +79,15 @@ class Resolutions:
         print(kb)
         return kb
         
-    def showConditions(self,conditions):
-        # self.ui.Table.insertRow(self.ui.Table.rowCount()+1)
-        # self.ui.Table.clearContents()
-        # item=QTableWidgetItem()
-        # item.setText('sentence')
-        # self.ui.Table.setItem(0,0,QTableWidgetItem(item))
+    def showSteps(self,kb):
+        self.ui.Table.clearContents()
+
         count=0
-        for sentence in conditions:
+        for sentence in kb:
             count+=1
-            s='C'+str(count)+': '+str(sentence)
             self.ui.Table.insertRow(self.ui.Table.rowCount())
-            itemID=QTableWidgetItem()
-            itemID.setText(s)
-            self.ui.Table.setItem(count-1,0,QTableWidgetItem('C'+str(count)))
-            self.ui.Table.setItem(count-1,1,QTableWidgetItem('Given'))
+            self.ui.Table.setItem(count-1,0,QTableWidgetItem(sentence.label))
+            self.ui.Table.setItem(count-1,1,QTableWidgetItem(str(sentence.source)))
             self.ui.Table.setItem(count-1,2,QTableWidgetItem(str(sentence)))
             
 
