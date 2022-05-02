@@ -40,8 +40,7 @@ class Resolutions:
     def start(self):
         self.ui.Table.clearContents()
         self.ui.Label_Result.clear()
-        conditions=self.readCondition()
-        kb=KB(conditions)
+        kb=self.readCondition()
         kb.resolution()
         self.showSteps(kb)
     

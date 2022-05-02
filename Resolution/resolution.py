@@ -88,7 +88,7 @@ class Sentence():
 
 
 class KB:
-    sourceSet=set()
+    # sourceSet=set()
     sentenceSet=set()
     def __init__(self,sentences) -> None:
         """relation between sentences is AND
@@ -115,50 +115,50 @@ class KB:
     def resolution(self):
         
         # traverse all sentences
-        n=len(self)
         i=0
         while True:
-            if i >= n:
+            if i >= len(self):
                 break
-            for j in range(i,n):
-                if self[i].label != self[j].label and (self[i].label,self[j].label) not in self.sourceSet and (self[j].label,self[i].label) not in self.sourceSet:
-                    # try to resolve s1 and s2
-                    print('resolve',self[i].label,self[j].label,'len',len(self))
-                    terms=[]
-                    # remove duplicates
-                    for t1 in self[i].terms:
-                        if t1 not in terms:
-                            terms.append(t1)
-                    for t2 in self[j].terms:
-                        if t2 not in terms:
-                            terms.append(t2)
-                            
-                    for t1 in self[i].terms:
-                        for t2 in self[j].terms:
-                            if t1==-t2:
-                                # delete t1 and t2
-                                terms.remove(t1)
-                                terms.remove(t2)
-                                
-                    terms.sort()
-                    
-                    if len(terms)==0:
-                        s=Sentence(terms,'!',(self[i].label,self[j].label))
-                        # create a new sentence
-                        self.sourceSet.add(s.source)
-                        self.sentenceSet.add(str(s.terms))
-                        self.append(s)
-                        return True
-                    else:
-                        s=Sentence(terms,'S'+str(len(self)),(self[i].label,self[j].label))
-                        # check if the terms are all in the KB
-                        if str(s.terms) in self.sentenceSet:
-                            break
-                        # create a new sentence
-                        self.sourceSet.add(s.source)
-                        self.sentenceSet.add(str(s.terms))
-                        self.append(s)
-                        n=len(self)
+            j=i+1
+            while True:
+                if j>=len(self):
+                    break
+                # if self[i].label != self[j].label and (self[i].label,self[j].label) not in self.sourceSet and (self[j].label,self[i].label) not in self.sourceSet:
+                # try to resolve s1 and s2
+                print('resolve',self[i].label,self[j].label,'len',len(self),'i',i,'j',j)
+                terms=[]
+                # remove duplicates
+                for t1 in self[i].terms:
+                    if t1 not in terms:
+                        terms.append(t1)
+                for t2 in self[j].terms:
+                    if t2 not in terms:
+                        terms.append(t2)
                         
+                for t1 in self[i].terms:
+                    for t2 in self[j].terms:
+                        if t1==-t2:
+                            # delete t1 and t2
+                            terms.remove(t1)
+                            terms.remove(t2)
+                            
+                terms.sort()
+                
+                if len(terms)==0:
+                    s=Sentence(terms,'!',(self[i].label,self[j].label))
+                    # create a new sentence
+                    # self.sourceSet.add(s.source)
+                    self.sentenceSet.add(str(s.terms))
+                    self.append(s)
+                    return True
+                else:
+                    s=Sentence(terms,'S'+str(len(self)+1),(self[i].label,self[j].label))
+                    # check if the terms are all in the KB
+                    if str(s.terms) not in self.sentenceSet:
+                        # create a new sentence
+                        # self.sourceSet.add(s.source)
+                        self.sentenceSet.add(str(s.terms))
+                        self.append(s)
+                j+=1
             i+=1
         return False
