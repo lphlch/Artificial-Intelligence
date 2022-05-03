@@ -19,10 +19,10 @@ R(x,A) V H(B,x)
 
 
 smaller test:
-K(A,A) V K(B,A) V K(C,A)
+K(A,A) V K(B,A)
 ~K(A,A)
 ~K(B,A)
-~K(C,A)
+K(C,A) V K(B,A)
 '''
 class Term:
     def __init__(self, function, element1, element2, isNegated):
@@ -125,7 +125,7 @@ class KB:
                     break
                 # if self[i].label != self[j].label and (self[i].label,self[j].label) not in self.sourceSet and (self[j].label,self[i].label) not in self.sourceSet:
                 # try to resolve s1 and s2
-                print('resolve',self[i].label,self[j].label,'len',len(self),'i',i,'j',j)
+                print('resolve',self[i].label,str(self[i]),self[j].label,str(self[j]),'len',len(self))
                 terms=[]
                 # remove duplicates
                 for t1 in self[i].terms:
@@ -135,12 +135,14 @@ class KB:
                     if t2 not in terms:
                         terms.append(t2)
                         
+                delFlag=False   # indicates whether a term deleted
                 for t1 in self[i].terms:
                     for t2 in self[j].terms:
                         if t1==-t2:
                             # delete t1 and t2
                             terms.remove(t1)
                             terms.remove(t2)
+                            delFlag=True
                             
                 terms.sort()
                 
@@ -148,15 +150,17 @@ class KB:
                     s=Sentence(terms,'!',(self[i].label,self[j].label))
                     # create a new sentence
                     # self.sourceSet.add(s.source)
+                    print('create',s.label,str(s.terms))
                     self.sentenceSet.add(str(s.terms))
                     self.append(s)
                     return True
                 else:
                     s=Sentence(terms,'S'+str(len(self)+1),(self[i].label,self[j].label))
-                    # check if the terms are all in the KB
-                    if str(s.terms) not in self.sentenceSet:
+                    # check if the terms are all in the KB, and if no new terms are created
+                    if str(s.terms) not in self.sentenceSet and delFlag:
                         # create a new sentence
                         # self.sourceSet.add(s.source)
+                        print('create',s.label,str(s.terms))
                         self.sentenceSet.add(str(s.terms))
                         self.append(s)
                 j+=1
