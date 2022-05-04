@@ -6,19 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>1000</width>
     <height>650</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>800</width>
+    <width>1000</width>
     <height>650</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>800</width>
+    <width>1000</width>
     <height>650</height>
    </size>
   </property>
@@ -33,22 +33,22 @@
   <widget class="QWidget" name="centralwidget">
    <property name="minimumSize">
     <size>
-     <width>800</width>
+     <width>1000</width>
      <height>650</height>
     </size>
    </property>
    <property name="maximumSize">
     <size>
-     <width>800</width>
+     <width>1000</width>
      <height>650</height>
     </size>
    </property>
    <widget class="QLabel" name="Label_Copyright">
     <property name="geometry">
      <rect>
-      <x>50</x>
-      <y>600</y>
-      <width>691</width>
+      <x>20</x>
+      <y>610</y>
+      <width>951</width>
       <height>41</height>
      </rect>
     </property>
@@ -62,9 +62,9 @@
    <widget class="QLabel" name="Label_Title">
     <property name="geometry">
      <rect>
-      <x>50</x>
+      <x>20</x>
       <y>0</y>
-      <width>701</width>
+      <width>951</width>
       <height>71</height>
      </rect>
     </property>
@@ -81,7 +81,7 @@
      <string notr="true">font: 24pt &quot;Lucida Handwriting&quot;;</string>
     </property>
     <property name="text">
-     <string>Resolution</string>
+     <string>Clause Resolution</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
@@ -90,11 +90,17 @@
    <widget class="QLabel" name="Label_Result">
     <property name="geometry">
      <rect>
-      <x>50</x>
-      <y>560</y>
-      <width>701</width>
-      <height>31</height>
+      <x>20</x>
+      <y>550</y>
+      <width>951</width>
+      <height>71</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Rockwell</family>
+      <pointsize>24</pointsize>
+     </font>
     </property>
     <property name="text">
      <string/>
@@ -103,23 +109,10 @@
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QPushButton" name="Button_ShowTree">
-    <property name="geometry">
-     <rect>
-      <x>460</x>
-      <y>500</y>
-      <width>141</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Show tree</string>
-    </property>
-   </widget>
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>50</x>
+      <x>20</x>
       <y>80</y>
       <width>211</width>
       <height>16</height>
@@ -145,11 +138,20 @@
    <widget class="QTextEdit" name="Text_Condition">
     <property name="geometry">
      <rect>
-      <x>50</x>
+      <x>20</x>
       <y>110</y>
-      <width>221</width>
+      <width>261</width>
       <height>431</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Adobe Devanagari</family>
+      <pointsize>11</pointsize>
+     </font>
+    </property>
+    <property name="acceptRichText">
+     <bool>false</bool>
     </property>
    </widget>
    <widget class="QTableWidget" name="Table">
@@ -157,7 +159,7 @@
      <rect>
       <x>300</x>
       <y>110</y>
-      <width>461</width>
+      <width>670</width>
       <height>381</height>
      </rect>
     </property>
@@ -177,38 +179,48 @@
      </property>
     </column>
    </widget>
-   <widget class="QPushButton" name="Button_Clear">
-    <property name="geometry">
-     <rect>
-      <x>620</x>
-      <y>500</y>
-      <width>141</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Clear</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="Button_Start">
+   <widget class="QWidget" name="">
     <property name="geometry">
      <rect>
       <x>300</x>
       <y>500</y>
-      <width>141</width>
+      <width>671</width>
       <height>41</height>
      </rect>
     </property>
-    <property name="text">
-     <string>Start</string>
-    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="spacing">
+      <number>84</number>
+     </property>
+     <item>
+      <widget class="QPushButton" name="Button_Start">
+       <property name="text">
+        <string>Start</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="Button_ShowPath">
+       <property name="text">
+        <string>Show path</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="Button_Clear">
+       <property name="text">
+        <string>Clear</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
    <zorder>Button_Clear</zorder>
    <zorder>Button_Start</zorder>
    <zorder>Label_Title</zorder>
    <zorder>Label_Copyright</zorder>
    <zorder>Label_Result</zorder>
-   <zorder>Button_ShowTree</zorder>
+   <zorder>Button_ShowPath</zorder>
    <zorder>label</zorder>
    <zorder>label_2</zorder>
    <zorder>Text_Condition</zorder>
