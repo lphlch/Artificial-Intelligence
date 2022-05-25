@@ -116,13 +116,13 @@
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>170</x>
+      <x>50</x>
       <y>570</y>
-      <width>671</width>
+      <width>411</width>
       <height>41</height>
      </rect>
     </property>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="horizontalLayout" stretch="4,4">
      <property name="spacing">
       <number>84</number>
      </property>
@@ -212,12 +212,49 @@
      </item>
     </layout>
    </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>550</x>
+      <y>570</y>
+      <width>104</width>
+      <height>37</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Transparency:</string>
+    </property>
+   </widget>
+   <widget class="QSlider" name="Slider_Tran">
+    <property name="geometry">
+     <rect>
+      <x>700</x>
+      <y>580</y>
+      <width>232</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="maximum">
+     <number>100</number>
+    </property>
+    <property name="value">
+     <number>100</number>
+    </property>
+    <property name="tracking">
+     <bool>true</bool>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
    <zorder>layoutWidget</zorder>
    <zorder>layoutWidget</zorder>
    <zorder>Label_Title</zorder>
    <zorder>Label_Copyright</zorder>
    <zorder>label</zorder>
    <zorder>label_2</zorder>
+   <zorder>label_3</zorder>
+   <zorder>Slider_Tran</zorder>
   </widget>
  </widget>
  <resources/>
